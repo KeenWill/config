@@ -1,0 +1,7 @@
+keys:
+  - &main_age_key age1dvaakvht3apaefc0fzv295374tqxf2aahrpt7glcm9w9aw7ppfdqqluxm0
+creation_rules:
+  - path_regex: ./[^/]+\.sops.yaml$
+    key_groups:
+    - age:
+      - *main_age_key

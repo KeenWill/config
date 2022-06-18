@@ -1,0 +1,66 @@
+---
+fail_fast: false
+repos:
+  - repo: local
+    hooks:
+      - id: agebox-check-validity
+        name: agebox-check-validity
+        entry: bash -c 'agebox validate --no-decrypt'
+        language: system
+        pass_filenames: false
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.26.3
+    hooks:
+      - args:
+          - --config-file
+          - .github/linters/.yamllint.yaml
+        id: yamllint
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.2.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-merge-conflict
+      - id: check-json
+      - id: check-symlinks
+      - id: check-shebang-scripts-are-executable
+      - id: detect-private-key
+      - id: pretty-format-json
+        args: [--autofix]
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.2.0
+    hooks:
+      - id: remove-crlf
+      - id: remove-tabs
+  # - repo: https://github.com/Lucas-C/pre-commit-hooks-go
+  #   rev: v1.0.1
+  #   hooks:
+  #     - id: checkmake
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-nodejs
+    rev: v1.1.2
+    hooks:
+      - id: dockerfile_lint
+  - repo: https://github.com/sirosen/texthooks
+    rev: 0.3.1
+    hooks:
+      - id: fix-smartquotes
+  - repo: https://github.com/k8s-at-home/sops-pre-commit
+    rev: v2.1.1
+    hooks:
+      - id: forbid-secrets
+  - repo: https://github.com/zricethezav/gitleaks
+    rev: v8.8.5
+    hooks:
+      - id: gitleaks
+  - repo: https://github.com/nix-community/nixpkgs-fmt
+    rev: v1.3.0
+    hooks:
+      - id: nixpkgs-fmt
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.7.2
+    hooks:
+      - id: shellcheck
