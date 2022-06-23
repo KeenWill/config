@@ -1,0 +1,18 @@
+DS_Store
+Thumbs.db
+keys
+# k8s
+kubeconfig
+# vscode-sops
+.decrypted~*.yaml
+.config.env
+*.agekey
+*.pub
+*.key
+github-deploy-key*
+# Ansible
+xanmanning.k3s*
+# Terraform
+.terraform
+.terraform.tfstate*
+terraform.tfstate*
