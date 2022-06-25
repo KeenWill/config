@@ -60,5 +60,6 @@ with lib.my;
       home.sessionVariables = {
         GOPATH = "$HOME/.go";
       };
-    });
-    }
+    })
+  ];
+}

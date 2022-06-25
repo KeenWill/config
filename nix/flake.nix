@@ -55,28 +55,28 @@
       #   packages."${system}" =
       #     mapModules ./packages (p: pkgs.callPackage p {});
 
-      nixosModules =
-        { dotfiles = import ./.; } // mapModulesRec ./modules import;
+      #   nixosModules =
+      #     { dotfiles = import ./.; } // mapModulesRec ./modules import;
 
-      nixosConfigurations =
-        mapHosts ./hosts/nixos { hostType = "nixos"; };
+      #   nixosConfigurations =
+      #     mapHosts ./hosts/nixos { hostType = "nixos"; };
 
       darwinConfigurations =
         mapHosts ./hosts/darwin { hostType = "darwin"; };
 
-      homeManagerConfigurations =
-        mapHosts ./hosts/general { hostType = "other"; };
+      #   homeManagerConfigurations =
+      #     mapHosts ./hosts/general { hostType = "other"; };
 
-      devShell."${system}" =
-        import ./shell.nix { inherit pkgs; };
+      #   devShell."${system}" =
+      #     import ./shell.nix { inherit pkgs; };
 
-      templates = {
-        full = {
-          path = ./.;
-          description = "A grossly incandescent nixos config";
-        };
-      } // import ./templates;
-      defaultTemplate = self.templates.full;
+      #   templates = {
+      #     full = {
+      #       path = ./.;
+      #       description = "A grossly incandescent nixos config";
+      #     };
+      #   } // import ./templates;
+      #   defaultTemplate = self.templates.full;
 
       defaultApp."${system}" = {
         type = "app";
