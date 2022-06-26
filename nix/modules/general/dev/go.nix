@@ -2,7 +2,8 @@
 
 with lib;
 with lib.my;
-
+let cfg = config.modules.general.dev.go;
+in
 {
   options.modules.general.dev.go = {
     enable = mkBoolOpt false;
@@ -38,10 +39,10 @@ with lib.my;
         gomodifytags # github.com/fatih/gomodifytag
         # revieve # github.com/mgechev/revive
         delve # github.com/go-delve/delve/cmd/dlv
-        gomove
+        # gomove
         gore # golang repl: github.com/motemen/gore
         gopls
-        nur.repos.mic92.hello-nur
+        # nur.repos.mic92.hello-nur
       ];
 
       programs.neovim.plugins = with pkgs.vimPlugins; [ vim-go ];
@@ -57,9 +58,9 @@ with lib.my;
         ];
       };
 
-      home.sessionVariables = {
-        GOPATH = "$HOME/.go";
-      };
+      # home.sessionVariables = {
+      #   GOPATH = "$HOME/.go";
+      # };
     })
   ];
 }

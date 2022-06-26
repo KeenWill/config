@@ -21,7 +21,7 @@ in
               networking.hostName = name;
             }
             (filterAttrs (n: v: !elem n [ "system" ]) attrs)
-            # ../. # /default.nix
+            ../. # /default.nix
             (import path)
           ];
         })
@@ -42,7 +42,7 @@ in
               ];
             }
             (filterAttrs (n: v: !elem n [ "system" ]) attrs)
-            # ../. # /default.nix
+            ../. # /default.nix
             (import path)
           ];
         }

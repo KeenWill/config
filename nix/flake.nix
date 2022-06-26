@@ -61,7 +61,7 @@
       #   nixosConfigurations =
       #     mapHosts ./hosts/nixos { hostType = "nixos"; };
 
-      darwinConfigurations = builtins.trace
+      darwinConfigurations =
         (mapHosts "darwin" ./hosts/darwin { });
 
       #   homeManagerConfigurations =

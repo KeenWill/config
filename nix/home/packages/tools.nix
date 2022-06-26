@@ -5,6 +5,19 @@
 {
   imports = [ ../base.nix ];
 
+  # Bat, a substitute for cat.
+  # https://github.com/sharkdp/bat
+  # https://rycee.gitlab.io/home-manager/options.html#opt-programs.bat.enable
+  programs.bat.enable = true;
+  programs.bat.config = {
+    style = "plain";
+  };
+
+  # Htop
+  # https://rycee.gitlab.io/home-manager/options.html#opt-programs.htop.enable
+  programs.htop.enable = true;
+  programs.htop.settings.show_program_path = true;
+
   config = {
     home.packages = with pkgs; [
       # database
