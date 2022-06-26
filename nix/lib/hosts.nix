@@ -5,12 +5,11 @@ with lib.my;
 with inputs.darwin.lib;
 let
   sys = "x86_64-linux";
-  hostType = "nixos";
   homeManagerStateVersion = "22.05";
   name = mkDefault (removeSuffix ".nix" (baseNameOf path));
 in
 {
-  mkHost = path: attrs @ { system ? sys, hostType ? hostType, ... }:
+  mkHost = hostType: path: attrs @ { system ? sys, ... }:
     if hostType == "nixos" then
       (nixosSystem
         {
@@ -27,8 +26,9 @@ in
           ];
         })
     else if hostType == "darwin" then
-      {
-        name = darwinSystem {
+
+      darwinSystem
+        {
           inherit system;
           specialArgs = { inherit lib inputs system; };
           modules = [
@@ -45,8 +45,8 @@ in
             # ../. # /default.nix
             (import path)
           ];
-        };
-      }
+        }
+
     else
       (home-manager.lib.homeManagerConfiguration
         {
@@ -61,7 +61,7 @@ in
           };
         });
 
-  mapHosts = dir: attrs @ { system ? system, hostType ? hostType, ... }:
+  mapHosts = hostType: dir: attrs @ { system ? system, ... }:
     mapModules dir
-      (hostPath: mkHost hostPath attrs);
+      (hostPath: mkHost hostType hostPath attrs);
 }

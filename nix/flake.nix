@@ -62,7 +62,7 @@
       #     mapHosts ./hosts/nixos { hostType = "nixos"; };
 
       darwinConfigurations =
-        mapHosts ./hosts/darwin { hostType = "darwin"; };
+        mapHosts "darwin" ./hosts/darwin;
 
       #   homeManagerConfigurations =
       #     mapHosts ./hosts/general { hostType = "other"; };
