@@ -51,6 +51,7 @@
   virtualisation.oci-containers = {
     backend = "podman";
     containers.homeassistant = {
+      ports = [ "8123:8123" ];
       volumes = [ "home-assistant:/config" ];
       environment.TZ = "America/New_York";
       image = "ghcr.io/home-assistant/home-assistant:2025.1";
