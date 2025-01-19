@@ -3,7 +3,7 @@ on:
   pull_request:
   push:
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -17,8 +17,27 @@ jobs:
         # signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
         # If you chose API tokens for write access OR if you have a private cache
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - name: build
+    - name: Build
       run: nix build .#nixosConfigurations.wkg-server0.config.system.build.toplevel
+    - name: Deploy
+      if: github.ref == 'refs/heads/main'
+      run: cachix push wkg-public-cache ./result
+  build-darwin:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: cachix/install-nix-action@v25
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+    - uses: cachix/cachix-action@v14
+      with:
+        name: wkg-public-cache
+        # If you chose signing key for write access
+        # signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+        # If you chose API tokens for write access OR if you have a private cache
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+    - name: Build
+      run: nix build .#darwinConfigurations.drg-mbp1.config.system.build.toplevel
     - name: Deploy
       if: github.ref == 'refs/heads/main'
       run: cachix push wkg-public-cache ./result
