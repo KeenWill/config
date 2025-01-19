@@ -37,11 +37,10 @@
             in
               cachix-deploy-lib.spec {
                 agents = {
-                  gh-actions = cachix-deploy-lib.nixos {
-                    modules = [ self.nixosConfigurations.wkg-server0.config.system.build.toplevel ];
-                  };
+                  gh-actions = cachix-deploy-lib.nixos self.nixosConfigurations.wkg-server0.config.system.build.toplevel;
                 };
               };
+      };
       }
     ) // 
     {
