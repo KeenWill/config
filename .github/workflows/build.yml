@@ -17,5 +17,8 @@ jobs:
         # signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
         # If you chose API tokens for write access OR if you have a private cache
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - run: nix build .#nixosConfigurations.wkg-server0.config.system.build.toplevel
-    - run: nix-shell --run "echo OK"
+    - name: build
+      run: nix build .#nixosConfigurations.wkg-server0.config.system.build.toplevel
+    - name: Deploy
+        if: github.ref == 'refs/heads/main'
+        run: cachix push wkg-public-cache ./result
