@@ -20,6 +20,8 @@ jobs:
     - name: Build
       run: nix build .#nixosConfigurations.wkg-server0.config.system.build.toplevel
     - name: Deploy
+      env:
+        CACHIX_ACTIVATE_TOKEN: "${{ secrets.CACHIX_ACTIVATE_TOKEN }}"
       if: github.ref == 'refs/heads/main'
       run: |
         cachix push wkg-public-cache ./result
