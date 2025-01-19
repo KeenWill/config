@@ -8,7 +8,6 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.systemd-boot.enable = true;
   boot.initrd.availableKernelModules = [ "ahci" "xhci_pci" "ehci_pci" "megaraid_sas" "nvme" "usbhid" "usb_storage" "sd_mod" "sr_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
