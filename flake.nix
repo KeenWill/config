@@ -37,7 +37,7 @@
             in
               cachix-deploy-lib.spec {
                 agents = {
-                  gh-actions = self.nixosConfigurations.wkg-server0.config.system.build.toplevel;
+                  wkg-server0 = self.nixosConfigurations.wkg-server0.config.system.build.toplevel;
                 };
               };
       }
