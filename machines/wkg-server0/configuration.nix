@@ -41,10 +41,23 @@
   services.cachix-agent.enable = true;
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 22 ];
+  networking.firewall.allowedTCPPorts = [ 22; 8123 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   networking.firewall.enable = true;
+
+  virtualisation.oci-containers = {
+    backend = "podman";
+    containers.homeassistant = {
+      volumes = [ "home-assistant:/config" ];
+      environment.TZ = "America/New_York";
+      image = "ghcr.io/home-assistant/home-assistant:2025.1";
+      extraOptions = [ 
+        "--network=host" 
+        "--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
+      ];
+    };
+  };
 
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
