@@ -40,7 +40,7 @@
                   gh-actions = cachix-deploy-lib.nixos self.nixosConfigurations.wkg-server0.config.system.build.toplevel;
                 };
               };
-      };
+      }
     ) // 
     {
       
