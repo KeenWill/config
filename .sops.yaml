@@ -1,0 +1,7 @@
+keys:
+  - &drg-mbp1 age1gpv5qhpytv3prxnqyaxg8ljpurqnx0l9lqwtdgqeja68edt75vhqjje7wq
+creation_rules:
+  - path_regex: secrets/[^/]+\.(yaml|json|env|ini|sops)$
+    key_groups:
+      - age:
+          - *drg-mbp1
