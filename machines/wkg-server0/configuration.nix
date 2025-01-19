@@ -48,18 +48,18 @@
 
   networking.bridges.br0.interfaces = [ "eno4" ];
 
+  systemd.services.create-podman-network = with config.virtualisation.oci-containers; {
+	serviceConfig.Type = "oneshot";
+	wantedBy = [ "podman-homer.service" ];
+	script = ''${pkgs.podman}/bin/podman network exists net_macvlan || \ ${pkgs.podman}/bin/podman network create --driver=macvlan --gateway=192.168.xx.1 --subnet=192.168.xx.0/24 -o parent=eno4 net_macvlan'';
+  };
+
   virtualisation.oci-containers = {
     backend = "podman";
-    containers.homeassistant = {
-      autoStart = true;
-      ports = [ "8123:8123" ];
-      volumes = [ "home-assistant:/config" ];
-      environment.TZ = "America/New_York";
-      image = "ghcr.io/home-assistant/home-assistant:2025.1";
-      extraOptions = [ 
-	"--cap-add=CAP_NET_RAW,CAP_NET_BIND_SERVICE"
-        # "--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
-      ];
+    containers = {
+	home-assistant = import ./containers/home-assistant.nix;
+	homer = import ./containers/homer.nix;
+      
     };
   };
 
