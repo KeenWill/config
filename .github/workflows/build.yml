@@ -25,7 +25,7 @@ jobs:
       if: github.ref == 'refs/heads/main'
       run: |
         cachix push wkg-public-cache ./result
-        cachix deploy activate ./result
+        cachix deploy activate $(nix build --print-out-paths)
       
   build-darwin:
     runs-on: macos-latest

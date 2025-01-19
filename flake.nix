@@ -29,22 +29,24 @@
     let
       inherit (self) outputs;
     in
-    {
-      flake-utils.lib.eachDefaultSystem (
-        system: {
-          defaultPackage = let
-            pkgs = import nixpkgs { inherit system; };
-            cachix-deploy-lib = cachix-deploy-flake.lib pkgs;
-          in
-            cachix-deploy-lib.spec {
-              agents = {
-                gh-actions = cachix-deploy-lib.nixos {
-                  inherit outputs.nixosConfigurations.wkg-server0.config.system.build.toplevel;
+    flake-utils.lib.eachDefaultSystem (
+      system: {
+        defaultPackage = let
+              pkgs = import nixpkgs { inherit system; };
+              cachix-deploy-lib = cachix-deploy-flake.lib pkgs;
+            in
+              cachix-deploy-lib.spec {
+                agents = {
+                  gh-actions = cachix-deploy-lib.nixos {
+                    modules = [ self.nixosConfigurations.wkg-server0.config.system.build.toplevel ];
+                  };
                 };
               };
-            };
-        }
-      );
+      }
+    ) // 
+    {
+      
+   
       darwinConfigurations = {
         "drg-mbp1" = nix-darwin.lib.darwinSystem {
           specialArgs = {
