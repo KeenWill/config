@@ -46,6 +46,8 @@
   # Or disable the firewall altogether.
   networking.firewall.enable = true;
 
+  networking.bridges.br0.interfaces = [ "eno4" ];
+
   virtualisation.oci-containers = {
     backend = "podman";
     containers.homeassistant = {
