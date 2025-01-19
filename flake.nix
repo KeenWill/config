@@ -12,6 +12,8 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     deploy-rs.url = "github:serokell/deploy-rs";
+    cachix-deploy-flake.url = "github:cachix/cachix-deploy-flake";
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
   outputs =
@@ -20,12 +22,29 @@
       nixpkgs,
       nix-darwin,
       deploy-rs,
+      flake-utils, 
+      cachix-deploy-flake,
       ...
     }@inputs:
     let
       inherit (self) outputs;
     in
     {
+      flake-utils.lib.eachDefaultSystem (
+        system: {
+          defaultPackage = let
+            pkgs = import nixpkgs { inherit system; };
+            cachix-deploy-lib = cachix-deploy-flake.lib pkgs;
+          in
+            cachix-deploy-lib.spec {
+              agents = {
+                gh-actions = cachix-deploy-lib.nixos {
+                  inherit outputs.nixosConfigurations.wkg-server0.config.system.build.toplevel;
+                };
+              };
+            };
+        }
+      );
       darwinConfigurations = {
         "drg-mbp1" = nix-darwin.lib.darwinSystem {
           specialArgs = {
