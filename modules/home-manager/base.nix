@@ -28,6 +28,8 @@
     git = {
       enable = true;
       extraConfig = {
+        user.name = "William Goeller";
+        user.email = "william@williamgoeller.com";
         pull.rebase = "false";
         core.editor = "nvim";
       };
