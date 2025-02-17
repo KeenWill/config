@@ -37,6 +37,7 @@
         pipes-rs
         poppler_utils
         qrencode
+        terraform
         tree
         vim
         yt-dlp
