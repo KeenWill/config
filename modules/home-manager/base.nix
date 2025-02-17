@@ -29,6 +29,7 @@
       enable = true;
       extraConfig = {
         pull.rebase = "false";
+        core.editor = "nvim";
       };
       # delta = {
       #   enable = true;
