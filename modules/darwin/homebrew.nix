@@ -98,6 +98,7 @@ in
       "steam"
       "teamviewer"
       "visual-studio-code"
+      "vladdoster/formulae/vimari"
       "vmware-fusion"
       "xquartz"
       "yubico-yubikey-manager"
