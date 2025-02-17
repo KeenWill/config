@@ -34,7 +34,7 @@
     flake-utils.lib.eachDefaultSystem (
       system: {
         defaultPackage = let
-              pkgs = import nixpkgs { inherit system; };
+              pkgs = import nixpkgs { inherit system; config.allowUnfree = true;  };
               cachix-deploy-lib = cachix-deploy-flake.lib pkgs;
             in
               cachix-deploy-lib.spec {
@@ -52,12 +52,12 @@
           specialArgs = {
             inherit inputs outputs;
           };
+          system = "aarch64-darwin";
           modules = [ ./machines/drg-mbp1/configuration.nix ];
         };
       };
       nixosConfigurations = {
         "wkg-server0" = nixpkgs.lib.nixosSystem {
-          system = "aarch64-darwin";
           specialArgs = {
             inherit inputs outputs;
           };
