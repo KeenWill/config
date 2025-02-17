@@ -51,7 +51,7 @@ in
     global.brewfile = true;
     onActivation.extraFlags = [ "--force" ];
 
-    taps = [ ];
+    taps = [ vladdoster/formulae ];
     brews = [
       "cowsay"
       "mas"
@@ -98,7 +98,7 @@ in
       "steam"
       "teamviewer"
       "visual-studio-code"
-      "vladdoster/formulae/vimari"
+      "vimari"
       "vmware-fusion"
       "xquartz"
       "yubico-yubikey-manager"
