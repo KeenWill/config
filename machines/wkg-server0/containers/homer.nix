@@ -7,16 +7,16 @@
 
   user = "root:root";
 
-  volumes = [
-    "/home/USER/homer/assets:/www/assets"
-  ];
+  #volumes = [
+  #  "/home/USER/homer/assets:/www/assets"
+  #];
 
   extraOptions = [
     "--pull=newer" # Pull if the image on the registry is newer than the one in the local containers storage
     "--name=homer"
     "--hostname=homer"
     "--network=net_macvlan"
-    "--ip=IP"
-    "--mac-address=MAC"
+    #"--ip=IP"
+    #"--mac-address=MAC"
   ];
 }

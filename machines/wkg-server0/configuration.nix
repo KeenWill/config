@@ -46,7 +46,7 @@
   # Or disable the firewall altogether.
   networking.firewall.enable = true;
 
-  networking.bridges.br0.interfaces = [ "eno4" ];
+ # networking.bridges.br0.interfaces = [ "eno4" ];
 
   systemd.services.create-podman-network = with config.virtualisation.oci-containers; {
 	serviceConfig.Type = "oneshot";
