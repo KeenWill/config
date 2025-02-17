@@ -94,9 +94,7 @@
           profiles = {
             system = {
               sshUser = "wkg";
-              path =
-deploy-rs.lib.x86_64-linux.activate.nixos
- self.nixosConfigurations."wkg-server0";
+              path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations."wkg-server0";
               user = "root";
             };
             # hello = {

@@ -27,6 +27,9 @@
   programs = {
     git = {
       enable = true;
+      extraConfig = {
+        pull.rebase = "false";
+      };
       # delta = {
       #   enable = true;
       # };
