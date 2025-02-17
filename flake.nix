@@ -24,6 +24,8 @@
       deploy-rs,
       flake-utils, 
       cachix-deploy-flake,
+      home-manager,
+      sops-nix,
       ...
     }@inputs:
     let
@@ -55,7 +57,7 @@
       };
       nixosConfigurations = {
         "wkg-server0" = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+          system = "aarch64-darwin";
           specialArgs = {
             inherit inputs outputs;
           };
@@ -73,6 +75,16 @@
         # };
       };
 
+      deploy.nodes."drg-mbp1" = {
+        hostname = "localhost";
+        profiles = {
+          system = {
+            path = deploy-rs.lib.aarch64-darwin.activate.darwin self.darwinConfigurations."drg-mbp1";
+          };
+        };
+      };
+      
+
         deploy.nodes."wkg-server0" = {
           # sshOpts = [ "-p" "22" ];
           hostname = "wkg-server0";
@@ -83,7 +95,8 @@
             system = {
               sshUser = "wkg";
               path =
-                deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations."wkg-server0";
+deploy-rs.lib.x86_64-linux.activate.nixos
+ self.nixosConfigurations."wkg-server0";
               user = "root";
             };
             # hello = {
@@ -93,6 +106,6 @@
             # };
           };
       };
-      # checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     };
 }

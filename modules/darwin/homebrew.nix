@@ -46,7 +46,6 @@ in
 
   homebrew = {
     enable = true;
-    # onActivation.cleanup = "uninstall";
     onActivation.autoUpdate = true;
     onActivation.cleanup = "zap";
     global.brewfile = true;
@@ -82,6 +81,7 @@ in
       "intellij-idea"
       "iterm2"
       "kap"
+      "kicad"
       "mactex"
       "microsoft-office"
       "minecraft"
@@ -91,6 +91,8 @@ in
       "openscad"
       "parallels"
       "prusaslicer"
+      "qflipper"
+      "raspberry-pi-imager"
       "slack"
       "spotify"
       "steam"
