@@ -15,6 +15,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "wkg-server0"; 
+  networking.hostId = "52ff0c0a";
 
   time.timeZone = "America/New_York";
 
