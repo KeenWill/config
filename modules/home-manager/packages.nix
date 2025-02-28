@@ -15,8 +15,8 @@
         clolcat
         cmatrix
         croc
-        du-dust
         dua
+        du-dust
         duf
         figlet
         fortune-kind
@@ -37,6 +37,8 @@
         pipes-rs
         poppler_utils
         qrencode
+        rg
+        smartmontools
         tree
         vim
         yt-dlp
