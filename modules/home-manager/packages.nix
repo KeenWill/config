@@ -37,9 +37,9 @@
         pipes-rs
         poppler_utils
         qrencode
-        rg
+        ripgrep
         smartmontools
-        terraform
+    #    terraform
         tree
         vim
         yt-dlp
