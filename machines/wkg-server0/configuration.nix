@@ -23,7 +23,7 @@
   users.users.wkg = {
     isNormalUser = true;
     description = "William Goeller";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "podman" ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICXw4ngDYWRRiyF8TqrJ3yXQ7xHTRQr6QbZjY3uM1hGr william@williamgoeller.com"
     ];
@@ -37,6 +37,10 @@
     vim 
     wget
     htop
+    ripgrep
+    neovim
+    podman-compose
+    docker-compose
   ];
 
   services.openssh.enable = true;
@@ -50,18 +54,30 @@
 
  # networking.bridges.br0.interfaces = [ "eno4" ];
 
-  systemd.services.create-podman-network = with config.virtualisation.oci-containers; {
-	serviceConfig.Type = "oneshot";
-	wantedBy = [ "podman-homer.service" ];
-	script = ''${pkgs.podman}/bin/podman network exists net_macvlan || \ ${pkgs.podman}/bin/podman network create --driver=macvlan --gateway=192.168.xx.1 --subnet=192.168.xx.0/24 -o parent=eno4 net_macvlan'';
-  };
+  # systemd.services.create-podman-network = with config.virtualisation.oci-containers; {
+	# serviceConfig.Type = "oneshot";
+	# wantedBy = [ "podman-homer.service" ];
+	# script = ''${pkgs.podman}/bin/podman network exists net_macvlan || \ ${pkgs.podman}/bin/podman network create --driver=macvlan --gateway=192.168.xx.1 --subnet=192.168.xx.0/24 -o parent=eno4 net_macvlan'';
+  # };
 
-  virtualisation.oci-containers = {
-    backend = "podman";
-    containers = {
-	home-assistant = import ./containers/home-assistant.nix;
-	homer = import ./containers/homer.nix;
+  # virtualisation.oci-containers = {
+  #   backend = "podman";
+  #   containers = {
+	# home-assistant = import ./containers/home-assistant.nix;
+	# homer = import ./containers/homer.nix;
       
+  #   };
+  # };
+
+  # Enable common container config files in /etc/containers
+  virtualisation.containers.enable = true;
+  virtualisation = {
+    podman = {
+      enable = true;
+      # Create a `docker` alias for podman, to use it as a drop-in replacement
+      dockerCompat = true;
+      # Required for containers under podman-compose to be able to talk to each other.
+      defaultNetwork.settings.dns_enabled = true;
     };
   };
 
