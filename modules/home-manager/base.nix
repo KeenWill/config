@@ -30,8 +30,11 @@
       extraConfig = {
         user.name = "William Goeller";
         user.email = "william@williamgoeller.com";
-        pull.rebase = "false";
+    userName = "William Goeller";
+    userEmail = "william@williamgoeller.com";
+        pull.rebase = "true";
         core.editor = "nvim";
+
       };
       # delta = {
       #   enable = true;

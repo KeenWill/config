@@ -16,8 +16,6 @@
   };
 
   programs.git = {
-    userName = "William Goeller";
-    userEmail = "william@williamgoeller.com";
     extraConfig = {
       gpg = {format = "ssh";};
       gpg."ssh".program = lib.mkMerge [
