@@ -55,7 +55,6 @@
 
   services.samba = {
     enable = true;
-    global.security = "user";
     openFirewall = true;
     settings = {
       global = {
