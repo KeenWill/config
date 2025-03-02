@@ -41,6 +41,9 @@
     neovim
     podman-compose
     sysstat
+    cowsay
+    ipmitool
+    "1password"
     docker-compose
   ];
 
