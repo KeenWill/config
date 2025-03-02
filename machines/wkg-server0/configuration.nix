@@ -43,7 +43,6 @@
     sysstat
     cowsay
     ipmitool
-    "1password"
     neofetch
     docker-compose
   ];
