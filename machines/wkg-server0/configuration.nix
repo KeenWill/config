@@ -78,6 +78,7 @@
         "create mask" = "0644";
         "directory mask" = "0755";
         "force user" = "wkg";
+        "writeable" = "yes";
       };
       "tm_share" = {
           "path" = "/tank/timemachine";
