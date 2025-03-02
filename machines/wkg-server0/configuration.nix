@@ -45,6 +45,7 @@
     sysstat
     vim 
     wget
+    lspci
   ];
 
   services.openssh.enable = true;
