@@ -66,13 +66,24 @@
         "server string" = "smbnix";
         "netbios name" = "smbnix";
         "security" = "user";
-        #"use sendfile" = "yes";
+        "use sendfile" = "yes";
         #"max protocol" = "smb2";
         # note: localhost is the ipv6 localhost ::1
         "hosts allow" = "10.0.1. 127.0.0.1 localhost";
         "hosts deny" = "0.0.0.0/0";
         "guest account" = "nobody";
         "map to guest" = "bad user";
+        "getwd cache" = "true";
+
+        # Disable [strict sync] and [sync always] to allow ZFS to handle caching
+        "strict sync" = "no";
+        "sync always" = "no";
+
+        # Enable asynchronous I/O for better performance
+        "aio read size" = "16384";
+        "aio write size" = "16384";
+
+        "min receivefile size" = "16384";
       };
       "tank" = {
         "path" = "/tank";
