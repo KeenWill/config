@@ -45,7 +45,8 @@
     sysstat
     vim 
     wget
-    lspci
+    pciutils    # provides lspci
+    dmidecode
   ];
 
   services.openssh.enable = true;
