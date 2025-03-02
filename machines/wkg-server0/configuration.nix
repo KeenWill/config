@@ -40,7 +40,7 @@
     ripgrep
     neovim
     podman-compose
-    iostat
+    sysstat
     docker-compose
   ];
 
