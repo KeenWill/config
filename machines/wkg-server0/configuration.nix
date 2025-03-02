@@ -34,17 +34,17 @@
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-    vim 
-    wget
-    htop
-    ripgrep
-    neovim
-    podman-compose
-    sysstat
     cowsay
+    docker-compose
+    htop
     ipmitool
     neofetch
-    docker-compose
+    neovim
+    podman-compose
+    ripgrep
+    sysstat
+    vim 
+    wget
   ];
 
   services.openssh.enable = true;
