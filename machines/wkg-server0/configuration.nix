@@ -14,6 +14,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.supportedFilesystems = [ "zfs" ];
+  boot.zfs.extraPools = ["tank"];
 
   networking.hostName = "wkg-server0"; 
   networking.hostId = "52ff0c0a";
@@ -45,6 +46,7 @@
     sysstat
     vim 
     wget
+hdparm
     pciutils    # provides lspci
     dmidecode
   ];
