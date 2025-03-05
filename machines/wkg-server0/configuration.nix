@@ -46,7 +46,8 @@
     sysstat
     vim 
     wget
-hdparm
+    fio
+    hdparm
     pciutils    # provides lspci
     dmidecode
   ];
