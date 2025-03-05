@@ -14,7 +14,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.supportedFilesystems = [ "zfs" ];
-  boot.zfs.extraPools = ["tank"];
+  boot.zfs.extraPools = [ "tank" "primary" ];
 
   networking.hostName = "wkg-server0"; 
   networking.hostId = "52ff0c0a";
