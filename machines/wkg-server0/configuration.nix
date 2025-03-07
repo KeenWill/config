@@ -150,6 +150,9 @@ tmux
   };
 
 
+  services.tailscale.enable = true;
+
+
 
  # networking.bridges.br0.interfaces = [ "eno4" ];
 
