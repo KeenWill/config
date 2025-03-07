@@ -123,6 +123,14 @@ tmux
         "force user" = "wkg";
         "writeable" = "yes";
       };
+      "primary" = {
+        "path" = "/primary";
+        "guest ok" = "no";
+        "create mask" = "644";
+        "directory mask" = "755";
+        "force user" = "wkg";
+        "writeable" = "yes";
+      };
       "tm_share" = {
           "path" = "/tank/timemachine";
           "valid users" = "wkg";
