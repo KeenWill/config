@@ -152,6 +152,11 @@ tmux
 
   services.tailscale.enable = true;
 
+  # allow tailscale port through the firewall
+  networking.firewall.allowedUDPPorts = [ config.services.tailscale.port ];
+
+  networking.firewall.trustedInterfaces = [ "tailscale0" ];
+  networking.firewall.allowedTCPPorts = [ 22 ];
 
 
  # networking.bridges.br0.interfaces = [ "eno4" ];
