@@ -87,6 +87,11 @@ tmux
   networking.firewall.enable = true;
   networking.firewall.allowPing = true;
 
+  # allow tailscale through the firewall
+  networking.firewall.allowedUDPPorts = [ config.services.tailscale.port ];
+  networking.firewall.trustedInterfaces = [ "tailscale0" ];
+
+
   services.samba = {
     enable = true;
     openFirewall = true;
@@ -152,11 +157,6 @@ tmux
 
   services.tailscale.enable = true;
 
-  # allow tailscale port through the firewall
-  networking.firewall.allowedUDPPorts = [ config.services.tailscale.port ];
-
-  networking.firewall.trustedInterfaces = [ "tailscale0" ];
-  networking.firewall.allowedTCPPorts = [ 22 ];
 
 
  # networking.bridges.br0.interfaces = [ "eno4" ];
