@@ -14,6 +14,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.supportedFilesystems = [ "zfs" ];
+  boot.zfs.extraPools = [ "tank" "primary" ];
 
   networking.hostName = "wkg-server0"; 
   networking.hostId = "52ff0c0a";
@@ -44,6 +45,8 @@ docker-compose # A tool for defining and running multi‑container Docker applic
 du-dust # A modern, human‑friendly alternative to the traditional du command, summarizing disk usage clearly.
 dua # A disk usage analyzer designed to quickly show how storage is being used.
 duf # A utility that presents disk usage and filesystem statistics in an easy‑to‑read table.
+fio # A flexible I/O tester that simulates various I/O workloads to benchmark and stress test storage devices.
+hdparm # A command‑line utility for configuring, optimizing, and testing hard disk drive parameters including performance tuning and power management.
 figlet # A program that creates large text banners from plain text using ASCII art fonts.
 gallery-dl # A command‑line downloader for extracting images and media from online galleries and hosting sites.
 gdu # A fast disk usage analyzer that quickly scans directories and reports space usage.
@@ -73,7 +76,6 @@ vim # A highly configurable text editor based on vi, popular among developers fo
 wget # A non‑interactive network downloader capable of retrieving files via HTTP, HTTPS, and FTP protocols.
 yt-dlp # An enhanced fork of youtube-dl that downloads videos and audio from YouTube and other sites.
   ];
-
   services.openssh.enable = true;
   services.cachix-agent.enable = true;
 

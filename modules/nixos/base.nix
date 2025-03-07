@@ -22,9 +22,7 @@
   boot.zfs = {
     enabled = true;
     extraPools = ["tank"];
-    
-
-  }
+  };
 
   nixpkgs.config.allowUnfree = true;
   nix = {
