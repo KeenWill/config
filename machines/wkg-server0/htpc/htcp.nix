@@ -168,8 +168,8 @@ in {
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop deluge; ${pkgs.podman}/bin/podman rm deluge";
       Restart = "always";
-      User = "deluge";
-      Group = "deluge";
+      # User = "deluge";
+      # Group = "deluge";
     };
   };
 
@@ -192,8 +192,8 @@ in {
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop jackett; ${pkgs.podman}/bin/podman rm jackett";
       Restart = "always";
-      User = "jackett";
-      Group = "jackett";
+      # User = "jackett";
+      # Group = "jackett";
     };
   };
 
@@ -215,8 +215,8 @@ in {
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop nzbget; ${pkgs.podman}/bin/podman rm nzbget";
       Restart = "always";
-      User = "nzbget";
-      Group = "nzbget";
+      # User = "nzbget";
+      # Group = "nzbget";
     };
   };
 
@@ -240,8 +240,8 @@ in {
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop sonarr; ${pkgs.podman}/bin/podman rm sonarr";
       Restart = "always";
-      User = "sonarr";
-      Group = "sonarr";
+      # User = "sonarr";
+      # Group = "sonarr";
     };
   };
 
@@ -265,8 +265,8 @@ in {
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop radarr; ${pkgs.podman}/bin/podman rm radarr";
       Restart = "always";
-      User = "radarr";
-      Group = "radarr";
+      # User = "radarr";
+      # Group = "radarr";
     };
   };
 
@@ -289,8 +289,8 @@ in {
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop plex-server; ${pkgs.podman}/bin/podman rm plex-server";
       Restart = "always";
-      User = "plex";
-      Group = "plex";
+      # User = "plex";
+      # Group = "plex";
     };
   };
 
@@ -313,8 +313,8 @@ in {
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop bazarr; ${pkgs.podman}/bin/podman rm bazarr";
       Restart = "always";
-      User = "bazarr";
-      Group = "bazarr";
+      # User = "bazarr";
+      # Group = "bazarr";
     };
   };
 
