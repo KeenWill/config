@@ -23,7 +23,6 @@ in {
     createHome = true;
     shell = pkgs.noshell;     # no login shell
     autoSubUidGidRange = true;  # allocate subuid/subgid range for rootless Podman :contentReference[oaicite:4]{index=4}
-    autoSubGidRange = true;
     linger = true;             # allow user services (ensure /run/user/UID exists)
   };
   users.groups.deluge = {};   users.users.deluge = {
@@ -34,7 +33,6 @@ in {
     createHome = true;
     shell = pkgs.noshell;
     autoSubUidGidRange = true;
-    autoSubGidRange = true;
     linger = true;
   };
   users.groups.jackett = {};  users.users.jackett = {
@@ -45,7 +43,6 @@ in {
     createHome = true;
     shell = pkgs.noshell;
     autoSubUidGidRange = true;
-    autoSubGidRange = true;
     linger = true;
   };
   users.groups.nzbget = {};   users.users.nzbget = {
@@ -56,7 +53,6 @@ in {
     createHome = true;
     shell = pkgs.noshell;
     autoSubUidGidRange = true;
-    autoSubGidRange = true;
     linger = true;
   };
   users.groups.sonarr = {};   users.users.sonarr = {
@@ -67,7 +63,6 @@ in {
     createHome = true;
     shell = pkgs.noshell;
     autoSubUidGidRange = true;
-    autoSubGidRange = true;
     linger = true;
   };
   users.groups.radarr = {};   users.users.radarr = {
@@ -78,7 +73,6 @@ in {
     createHome = true;
     shell = pkgs.noshell;
     autoSubUidGidRange = true;
-    autoSubGidRange = true;
     linger = true;
   };
   users.groups.plex = {};     users.users.plex = {
@@ -89,7 +83,6 @@ in {
     createHome = true;
     shell = pkgs.noshell;
     autoSubUidGidRange = true;
-    autoSubGidRange = true;
     linger = true;
   };
   users.groups.bazarr = {};   users.users.bazarr = {
@@ -100,7 +93,6 @@ in {
     createHome = true;
     shell = pkgs.noshell;
     autoSubUidGidRange = true;
-    autoSubGidRange = true;
     linger = true;
   };
 
