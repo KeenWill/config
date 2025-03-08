@@ -15,23 +15,23 @@ in {
 
   ##### 2. Define dedicated system users for each service #####
   # Each container will run as its own unprivileged user for security isolation
-  users.groups.vpn = {};      users.users.vpn = {
-    isNormalUser = true;
-    description = "User for OpenVPN container";
-    group = "vpn";
-    home = "/var/lib/vpn";
-    createHome = true;
-    shell = "/run/current-system/sw/bin/nologin";     # no login shell
-    autoSubUidGidRange = true;  # allocate subuid/subgid range for rootless Podman :contentReference[oaicite:4]{index=4}
-    linger = true;             # allow user services (ensure /run/user/UID exists)
-  };
+  # users.groups.vpn = {};      users.users.vpn = {
+  #   isNormalUser = true;
+  #   description = "User for OpenVPN container";
+  #   group = "vpn";
+  #   home = "/var/lib/vpn";
+  #   createHome = true;
+  #   shell = pkgs.noshell;     # no login shell
+  #   autoSubUidGidRange = true;  # allocate subuid/subgid range for rootless Podman :contentReference[oaicite:4]{index=4}
+  #   linger = true;             # allow user services (ensure /run/user/UID exists)
+  # };
   users.groups.deluge = {};   users.users.deluge = {
     isNormalUser = true;
     description = "User for Deluge container";
     group = "deluge";
     home = "/var/lib/deluge";
     createHome = true;
-    shell = "/run/current-system/sw/bin/nologin";
+    shell = pkgs.noshell;
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -41,7 +41,7 @@ in {
     group = "jackett";
     home = "/var/lib/jackett";
     createHome = true;
-    shell = "/run/current-system/sw/bin/nologin";
+    shell = pkgs.noshell;
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -51,7 +51,7 @@ in {
     group = "nzbget";
     home = "/var/lib/nzbget";
     createHome = true;
-    shell = "/run/current-system/sw/bin/nologin";
+    shell = pkgs.noshell;
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -61,7 +61,7 @@ in {
     group = "sonarr";
     home = "/var/lib/sonarr";
     createHome = true;
-    shell = "/run/current-system/sw/bin/nologin";
+    shell = pkgs.noshell;
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -71,7 +71,7 @@ in {
     group = "radarr";
     home = "/var/lib/radarr";
     createHome = true;
-    shell = "/run/current-system/sw/bin/nologin";
+    shell = pkgs.noshell;
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -81,7 +81,7 @@ in {
     group = "plex";
     home = "/var/lib/plex";
     createHome = true;
-    shell = "/run/current-system/sw/bin/nologin";
+    shell = pkgs.noshell;
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -91,24 +91,24 @@ in {
     group = "bazarr";
     home = "/var/lib/bazarr";
     createHome = true;
-    shell = "/run/current-system/sw/bin/nologin";
+    shell = pkgs.noshell;
     autoSubUidGidRange = true;
     linger = true;
   };
 
   ##### 3. (Optional) Create a custom Podman network for VPN #####
   # If you want an isolated network for the VPN and Deluge, you can create one:
-  systemd.services.create-vpn-network = {
-    description = "Podman: create custom network 'vpn-net'";
-    wantedBy = [ "multi-user.target" ];
-    before = [ "podman-vpn.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = "${pkgs.podman}/bin/podman network create vpn-net";
-      ExecStop  = "${pkgs.podman}/bin/podman network rm vpn-net";
-    };
-  };
+  # systemd.services.create-vpn-network = {
+  #   description = "Podman: create custom network 'vpn-net'";
+  #   wantedBy = [ "multi-user.target" ];
+  #   before = [ "podman-vpn.service" ];
+  #   serviceConfig = {
+  #     Type = "oneshot";
+  #     RemainAfterExit = true;
+  #     ExecStart = "${pkgs.podman}/bin/podman network create vpn-net";
+  #     ExecStop  = "${pkgs.podman}/bin/podman network rm vpn-net";
+  #   };
+  # };
   # (In this config, we directly use container network sharing for VPN/Deluge, 
   # so this custom network is not strictly required. It’s provided as an example.)
 
@@ -121,44 +121,44 @@ in {
   # Also, we set Restart=always to keep containers running (like "restart: unless-stopped").
 
   ## VPN Container (OpenVPN client) ##
-  systemd.services.podman-vpn = {
-    description = "OpenVPN Client container (VPN)";
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      ExecStart = ''
-        ${pkgs.podman}/bin/podman run \
-          --name vpn \
-          --cap-add=NET_ADMIN \            # allow modifying network interfaces (for VPN) 
-          --device /dev/net/tun:/dev/net/tun \  # attach TUN device
-          --security-opt label=disable \   # disable SELinux labeling (matches compose)
-          --network host \                 # use host network (or use a user-defined network if created)
-          -p 8112:8112/tcp \               # publish Deluge Web UI port to host (for local network access)
-          -v /dev/net:/dev/net:z \         # mount /dev/net (tun device directory)
-          -v ${rootDir}/config/vpn:/vpn \  # OpenVPN config directory
-          -e TZ=${TZ} \                    # timezone environment
-          -d dperson/openvpn-client:latest \ 
-          -f "" -r 192.168.1.0/24          # command: enable firewall (-f) and route local network traffic (-r)
-      '';
-      ExecStop = "${pkgs.podman}/bin/podman stop vpn; ${pkgs.podman}/bin/podman rm vpn";
-      Restart = "always";
-      User = "vpn";
-      Group = "vpn";
-    };
-  };
+  # systemd.services.podman-vpn = {
+  #   description = "OpenVPN Client container (VPN)";
+  #   after = [ "network-online.target" ];
+  #   wants = [ "network-online.target" ];
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig = {
+  #     ExecStart = ''
+  #       ${pkgs.podman}/bin/podman run \
+  #         --name vpn \
+  #         --cap-add=NET_ADMIN \            # allow modifying network interfaces (for VPN) 
+  #         --device /dev/net/tun:/dev/net/tun \  # attach TUN device
+  #         --security-opt label=disable \   # disable SELinux labeling (matches compose)
+  #         --network host \                 # use host network (or use a user-defined network if created)
+  #         -p 8112:8112/tcp \               # publish Deluge Web UI port to host (for local network access)
+  #         -v /dev/net:/dev/net:z \         # mount /dev/net (tun device directory)
+  #         -v ${rootDir}/config/vpn:/vpn \  # OpenVPN config directory
+  #         -e TZ=${TZ} \                    # timezone environment
+  #         -d dperson/openvpn-client:latest \ 
+  #         -f "" -r 192.168.1.0/24          # command: enable firewall (-f) and route local network traffic (-r)
+  #     '';
+  #     ExecStop = "${pkgs.podman}/bin/podman stop vpn; ${pkgs.podman}/bin/podman rm vpn";
+  #     Restart = "always";
+  #     User = "vpn";
+  #     Group = "vpn";
+  #   };
+  # };
 
   ## Deluge (Torrent downloader) ##
   systemd.services.podman-deluge = {
     description = "Deluge Torrent client container";
-    after = [ "podman-vpn.service" ];    # ensure VPN container is up first
-    requires = [ "podman-vpn.service" ];
+    # after = [ "podman-vpn.service" ];    # ensure VPN container is up first
+    # requires = [ "podman-vpn.service" ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       ExecStart = ''
         ${pkgs.podman}/bin/podman run \
           --name deluge \
-          --network container:vpn \      # share network with VPN container (all traffic goes through VPN)
+          # --network container:vpn \      # share network with VPN container (all traffic goes through VPN)
           -e PUID=${PUID} \              # user ID inside container (from .env)
           -e PGID=${PGID} \              # group ID inside container
           -e TZ=${TZ} \                  # timezone
