@@ -21,7 +21,7 @@ in {
     group = "vpn";
     home = "/var/lib/vpn";
     createHome = true;
-    shell = pkgs.noshell;     # no login shell
+    shell = "/run/current-system/sw/bin/nologin";     # no login shell
     autoSubUidGidRange = true;  # allocate subuid/subgid range for rootless Podman :contentReference[oaicite:4]{index=4}
     linger = true;             # allow user services (ensure /run/user/UID exists)
   };
@@ -31,7 +31,7 @@ in {
     group = "deluge";
     home = "/var/lib/deluge";
     createHome = true;
-    shell = pkgs.noshell;
+    shell = "/run/current-system/sw/bin/nologin";
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -41,7 +41,7 @@ in {
     group = "jackett";
     home = "/var/lib/jackett";
     createHome = true;
-    shell = pkgs.noshell;
+    shell = "/run/current-system/sw/bin/nologin";
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -51,7 +51,7 @@ in {
     group = "nzbget";
     home = "/var/lib/nzbget";
     createHome = true;
-    shell = pkgs.noshell;
+    shell = "/run/current-system/sw/bin/nologin";
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -61,7 +61,7 @@ in {
     group = "sonarr";
     home = "/var/lib/sonarr";
     createHome = true;
-    shell = pkgs.noshell;
+    shell = "/run/current-system/sw/bin/nologin";
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -71,7 +71,7 @@ in {
     group = "radarr";
     home = "/var/lib/radarr";
     createHome = true;
-    shell = pkgs.noshell;
+    shell = "/run/current-system/sw/bin/nologin";
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -81,7 +81,7 @@ in {
     group = "plex";
     home = "/var/lib/plex";
     createHome = true;
-    shell = pkgs.noshell;
+    shell = "/run/current-system/sw/bin/nologin";
     autoSubUidGidRange = true;
     linger = true;
   };
@@ -91,7 +91,7 @@ in {
     group = "bazarr";
     home = "/var/lib/bazarr";
     createHome = true;
-    shell = pkgs.noshell;
+    shell = "/run/current-system/sw/bin/nologin";
     autoSubUidGidRange = true;
     linger = true;
   };
