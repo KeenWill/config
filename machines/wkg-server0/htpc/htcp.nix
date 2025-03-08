@@ -154,11 +154,11 @@ in {
     # after = [ "podman-vpn.service" ];    # ensure VPN container is up first
     # requires = [ "podman-vpn.service" ];
     wantedBy = [ "multi-user.target" ];
+          # --network container:vpn \      # share network with VPN container (all traffic goes through VPN)
     serviceConfig = {
       ExecStart = ''
         ${pkgs.podman}/bin/podman run \
           --name deluge \
-          # --network container:vpn \      # share network with VPN container (all traffic goes through VPN)
           -e PUID=${PUID} \              # user ID inside container (from .env)
           -e PGID=${PGID} \              # group ID inside container
           -e TZ=${TZ} \                  # timezone
@@ -188,7 +188,7 @@ in {
           -v /etc/localtime:/etc/localtime:ro \           # pass host timezone file (read-only)
           -v ${rootDir}/downloads/torrent-blackhole:/downloads \  # torrent blackhole folder
           -v ${rootDir}/config/jackett:/config \          # Jackett config folder
-          -d linuxserver/jackett:latest
+          -l linuxserver/jackett:latest
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop jackett; ${pkgs.podman}/bin/podman rm jackett";
       Restart = "always";
