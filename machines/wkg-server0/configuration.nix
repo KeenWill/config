@@ -77,7 +77,7 @@ vim # A highly configurable text editor based on vi, popular among developers fo
 wget # A non‑interactive network downloader capable of retrieving files via HTTP, HTTPS, and FTP protocols.
 yt-dlp # An enhanced fork of youtube-dl that downloads videos and audio from YouTube and other sites.
 tmux 
-uidmap
+shadow
   ];
   services.openssh.enable = true;
   services.cachix-agent.enable = true;
