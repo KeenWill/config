@@ -159,11 +159,11 @@ in {
       ExecStart = ''
         ${pkgs.podman}/bin/podman run \
           --name deluge \
-          -e PUID=${PUID} \              # user ID inside container (from .env)
-          -e PGID=${PGID} \              # group ID inside container
-          -e TZ=${TZ} \                  # timezone
-          -v ${rootDir}/downloads:/downloads \   # downloads folder
-          -v ${rootDir}/config/deluge:/config \  # Deluge config folder
+          -e PUID=${PUID} \
+          -e PGID=${PGID} \
+          -e TZ=${TZ} \
+          -v ${rootDir}/downloads:/downloads \
+          -v ${rootDir}/config/deluge:/config \
           -d linuxserver/deluge:latest
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop deluge; ${pkgs.podman}/bin/podman rm deluge";
