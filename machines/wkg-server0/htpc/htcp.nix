@@ -167,7 +167,7 @@ in {
           -v ${rootDir}/config/deluge:/config \
           -d linuxserver/deluge:latest
       '';
-      ExecStop = "${pkgs.podman}/bin/podman stop deluge; ${pkgs.podman}/bin/podman rm deluge";
+      ExecStop = "${pkgs.podman}/bin/podman stop deluge && ${pkgs.podman}/bin/podman rm deluge";
       Restart = "always";
       # User = "deluge";
       # Group = "deluge";
