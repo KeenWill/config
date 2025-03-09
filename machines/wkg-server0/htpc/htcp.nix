@@ -4,6 +4,8 @@ let
   # Root directory for all media data and config (equivalent to ${ROOT} in Compose)
   rootDir = "/tank/htpc";     # <-- Change this to your media/config parent directory
   # Default UID/GID and timezone from the Compose .env (adjust as needed)
+  delugeUidAndGid = 20001;
+
   PUID    = "1000";                # UID for inside-container user (e.g., your main user’s ID or a media user)
   PGID    = "100";                # GID for inside-container user (e.g., a media group ID)
   TZ      = "America/New_York"; 
@@ -25,7 +27,8 @@ in {
   #   autoSubUidGidRange = true;  # allocate subuid/subgid range for rootless Podman :contentReference[oaicite:4]{index=4}
   #   linger = true;             # allow user services (ensure /run/user/UID exists)
   # };
-  users.groups.deluge = {};   users.users.deluge = {
+  users.groups.deluge.gid = delugeUidAndGid;   
+  users.users.deluge = {
     isNormalUser = true;
     description = "User for Deluge container";
     group = "deluge";
@@ -34,6 +37,7 @@ in {
     shell = "/run/current-system/sw/bin/nologin";
     autoSubUidGidRange = true;
     linger = true;
+    uid = delugeUidAndGid;
   };
   users.groups.jackett = {};  users.users.jackett = {
     isNormalUser = true;
