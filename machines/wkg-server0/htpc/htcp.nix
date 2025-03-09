@@ -183,11 +183,11 @@ in {
       ExecStart = ''
         ${pkgs.podman}/bin/podman run \
           --name jackett \
-          --network host \               # use host networking (exposes service directly on host)
-          -e PUID=${PUID} -e PGID=${PGID} -e TZ=${TZ} \   # environment variables
-          -v /etc/localtime:/etc/localtime:ro \           # pass host timezone file (read-only)
-          -v ${rootDir}/downloads/torrent-blackhole:/downloads \  # torrent blackhole folder
-          -v ${rootDir}/config/jackett:/config \          # Jackett config folder
+          --network host \
+          -e PUID=${PUID} -e PGID=${PGID} -e TZ=${TZ} \
+          -v /etc/localtime:/etc/localtime:ro \
+          -v ${rootDir}/downloads/torrent-blackhole:/downloads \
+          -v ${rootDir}/config/jackett:/config \
           -l linuxserver/jackett:latest
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop jackett; ${pkgs.podman}/bin/podman rm jackett";
@@ -209,8 +209,8 @@ in {
           --name nzbget \
           --network host \ 
           -e PUID=${PUID} -e PGID=${PGID} -e TZ=${TZ} \
-          -v ${rootDir}/downloads:/downloads \    # downloads folder
-          -v ${rootDir}/config/nzbget:/config \   # NZBGet config folder
+          -v ${rootDir}/downloads:/downloads \
+          -v ${rootDir}/config/nzbget:/config \
           -d linuxserver/nzbget:latest
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop nzbget; ${pkgs.podman}/bin/podman rm nzbget";
@@ -232,10 +232,10 @@ in {
           --name sonarr \
           --network host \ 
           -e PUID=${PUID} -e PGID=${PGID} -e TZ=${TZ} \
-          -v /etc/localtime:/etc/localtime:ro \   # pass host timezone info
-          -v ${rootDir}/config/sonarr:/config \   # Sonarr config
-          -v ${rootDir}/complete/tv:/tv \         # TV shows library folder
-          -v ${rootDir}/downloads:/downloads \    # downloads folder
+          -v /etc/localtime:/etc/localtime:ro \
+          -v ${rootDir}/config/sonarr:/config \
+          -v ${rootDir}/complete/tv:/tv \
+          -v ${rootDir}/downloads:/downloads \
           -d linuxserver/sonarr:latest
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop sonarr; ${pkgs.podman}/bin/podman rm sonarr";
@@ -257,10 +257,10 @@ in {
           --name radarr \
           --network host \ 
           -e PUID=${PUID} -e PGID=${PGID} -e TZ=${TZ} \
-          -v /etc/localtime:/etc/localtime:ro \   # timezone info
-          -v ${rootDir}/config/radarr:/config \   # Radarr config
-          -v ${rootDir}/complete/movies:/movies \ # Movies library folder
-          -v ${rootDir}/downloads:/downloads \    # downloads folder
+          -v /etc/localtime:/etc/localtime:ro \
+          -v ${rootDir}/config/radarr:/config \
+          -v ${rootDir}/complete/movies:/movies \
+          -v ${rootDir}/downloads:/downloads \
           -d linuxserver/radarr:latest
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop radarr; ${pkgs.podman}/bin/podman rm radarr";
@@ -281,10 +281,10 @@ in {
         ${pkgs.podman}/bin/podman run \
           --name plex-server \
           --network host \ 
-          -e TZ=${TZ} \                              # timezone
-          -v ${rootDir}/config/plex/db:/config \      # Plex database/config
-          -v ${rootDir}/config/plex/transcode:/transcode \  # transcoding temp dir
-          -v ${rootDir}/complete:/data \              # media library root (TV+movies)
+          -e TZ=${TZ} \
+          -v ${rootDir}/config/plex/db:/config \
+          -v ${rootDir}/config/plex/transcode:/transcode \
+          -v ${rootDir}/complete:/data \
           -d plexinc/pms-docker:latest
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop plex-server; ${pkgs.podman}/bin/podman rm plex-server";
@@ -305,10 +305,10 @@ in {
         ${pkgs.podman}/bin/podman run \
           --name bazarr \
           --network host \ 
-          -e PUID=${PUID} -e PGID=${PGID} -e TZ=${TZ} -e UMASK_SET=022 \  # include UMASK
-          -v ${rootDir}/config/bazarr:/config \    # Bazarr config
-          -v ${rootDir}/complete/movies:/movies \  # Movies library
-          -v ${rootDir}/complete/tv:/tv \          # TV shows library
+          -e PUID=${PUID} -e PGID=${PGID} -e TZ=${TZ} -e UMASK_SET=022 \
+          -v ${rootDir}/config/bazarr:/config \
+          -v ${rootDir}/complete/movies:/movies \
+          -v ${rootDir}/complete/tv:/tv \
           -d linuxserver/bazarr:latest
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop bazarr; ${pkgs.podman}/bin/podman rm bazarr";
