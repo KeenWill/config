@@ -158,6 +158,7 @@ in {
     serviceConfig = {
       ExecStart = ''
         ${pkgs.podman}/bin/podman run \
+          --replace \
           --name deluge \
           -e PUID=${PUID} \
           -e PGID=${PGID} \
