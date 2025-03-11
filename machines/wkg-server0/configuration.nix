@@ -78,6 +78,7 @@ wget # A non‑interactive network downloader capable of retrieving files via HT
 yt-dlp # An enhanced fork of youtube-dl that downloads videos and audio from YouTube and other sites.
 tmux 
 shadow
+rclone
   ];
   services.openssh.enable = true;
   services.cachix-agent.enable = true;
