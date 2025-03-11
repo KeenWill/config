@@ -57,6 +57,7 @@ in
       "mas"
       "opam"
       "ipmitool"
+      "rclone"
     ];
     casks = [
       "1password"
