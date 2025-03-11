@@ -37,7 +37,7 @@
   system.defaults.dock = {
     autohide = true;
     orientation = "left";
-    expose-group-by-app = false;
+    expose-group-apps = false;
     mru-spaces = false;
     tilesize = 26;
     show-process-indicators = true;

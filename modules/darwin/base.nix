@@ -8,6 +8,8 @@
   ];
 
   nix = {
+    enable = true;
+    optimise.automatic = true;
     package = pkgs.nix;
     gc = {
       automatic = true;
@@ -20,7 +22,6 @@
     };
     settings = {
       experimental-features = "nix-command flakes";
-      auto-optimise-store = true;
       trusted-users = [
         "root"
         "@admin"
@@ -28,11 +29,13 @@
     };
   };
 
+
+
   programs.zsh.enable = true;
-  security.pam.enableSudoTouchIdAuth = true;
+  security.pam.services.sudo_local.touchIdAuth = true;
+
 
   services = {
-    nix-daemon.enable = true;
     tailscale.enable = true;
   };
 
