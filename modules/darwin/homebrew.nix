@@ -23,7 +23,8 @@ in
   # nixpkgs.config.allowUnsupportedSystem = true;
 
   # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
+  # services.nix-daemon.enable = true;
+  nix.enable = true;
   #services.karabiner-elements.enable = true;
   # nix.package = pkgs.nix;
 
@@ -38,7 +39,7 @@ in
   # Set Git commit hash for darwin-version.
   #system.configurationRevision = self.rev or self.dirtyRev or null;
 
-  security.pam.enableSudoTouchIdAuth = true;
+  security.pam.services.sudo_local.touchIdAuth = true;
 
   environment.shellInit = ''
     eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
