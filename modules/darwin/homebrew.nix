@@ -18,6 +18,7 @@ in
     pkgs.vim
     pkgs.neovim
     pkgs.nixfmt-rfc-style
+    pkgs.rclone
   ];
 
   # nixpkgs.config.allowUnsupportedSystem = true;
