@@ -73,6 +73,7 @@ in
       "carbon-copy-cloner"
       "chatgpt"
       "cursor"
+      "darktable"
       "digikam"
       "discord"
       "docker"
