@@ -79,6 +79,7 @@ yt-dlp # An enhanced fork of youtube-dl that downloads videos and audio from You
 tmux 
 shadow
 rclone
+hfsprogs
   ];
   services.openssh.enable = true;
   services.cachix-agent.enable = true;
