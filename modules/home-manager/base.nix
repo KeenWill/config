@@ -25,6 +25,16 @@
   };
 
   programs = {
+    ssh = {
+      enable = true;
+      matchBlocks = {
+        wkg-server0 = {
+          port = 22;
+          hostname =  "wkg-server0";
+          user = "wkg";
+        };
+      };
+    };
     git = {
       enable = true;
       extraConfig = {
@@ -68,6 +78,7 @@
       enableZshIntegration = true;
       nix-direnv.enable = true;
     };
+    
     #     ranger.enable = true;
     #     fastfetch.enable = true;
   };

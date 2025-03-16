@@ -70,6 +70,7 @@ in
       "balenaetcher"
       "bambu-studio"
       "bettertouchtool"
+      "blender"
       "carbon-copy-cloner"
       "chatgpt"
       "cursor"
