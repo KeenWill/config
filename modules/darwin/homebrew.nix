@@ -102,6 +102,7 @@ in
       "slack"
       "spotify"
       "steam"
+      "thinkorswim"
       "teamviewer"
       "vimari"
       "visual-studio-code"
