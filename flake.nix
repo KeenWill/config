@@ -14,6 +14,7 @@
     deploy-rs.url = "github:serokell/deploy-rs";
     cachix-deploy-flake.url = "github:cachix/cachix-deploy-flake";
     flake-utils.url = "github:numtide/flake-utils";
+    vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
 
   outputs =
@@ -26,6 +27,7 @@
       cachix-deploy-flake,
       home-manager,
       sops-nix,
+      vscode-server,
       ...
     }@inputs:
     let
@@ -61,7 +63,8 @@
           specialArgs = {
             inherit inputs outputs;
           };
-          modules = [ ./machines/wkg-server0/configuration.nix ];
+          modules = [ ./machines/wkg-server0/configuration.nix vscode-server.nixosModules.default ];
+
         };
         # "iso-aarch64-linux" = nixpkgs.lib.nixosSystem {
         #   system = "aarch64-linux";

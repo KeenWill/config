@@ -80,9 +80,14 @@ tmux
 shadow
 rclone
 hfsprogs
+lf
+backblaze-b2
+devenv
   ];
   services.openssh.enable = true;
   services.cachix-agent.enable = true;
+
+  services.vscode-server.enable = true; 
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 22 80 443 8123 ];
