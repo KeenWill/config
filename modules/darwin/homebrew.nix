@@ -49,9 +49,10 @@ in
   homebrew = {
     enable = true;
     onActivation.autoUpdate = true;
+    onActivation.upgrade = true;
     onActivation.cleanup = "zap";
-    global.brewfile = true;
     onActivation.extraFlags = [ "--force" ];
+    global.brewfile = true;
 
     taps = [ "vladdoster/formulae" ];
     brews = [
