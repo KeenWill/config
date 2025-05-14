@@ -1,7 +1,15 @@
 keys:
   - &drg-mbp1 age1gpv5qhpytv3prxnqyaxg8ljpurqnx0l9lqwtdgqeja68edt75vhqjje7wq
+  - &wkg-server0 age1gpv5qhpytv3prxnqyaxg8ljpurqnx0l9lqwtdgqeja68edt75vhqjje7wq  # Replace with actual server key
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini|sops)$
     key_groups:
       - age:
           - *drg-mbp1
+  
+  # Kubernetes-specific rules
+  - path_regex: kubernetes/.*\.(yaml|json|env|ini|sops)$
+    key_groups:
+      - age:
+          - *drg-mbp1
+          - *wkg-server0
