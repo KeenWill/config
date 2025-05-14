@@ -57,9 +57,12 @@ in
     taps = [ "vladdoster/formulae" ];
     brews = [
       "cowsay"
+      "docker"
       "mas"
+      "task"
       "opam"
       "ipmitool"
+      "taskwarrior-tui"
       "rclone"
     ];
     casks = [
@@ -74,6 +77,7 @@ in
       "blender"
       "carbon-copy-cloner"
       "chatgpt"
+      "claude"
       "cursor"
       "darktable"
       "digikam"
