@@ -1,0 +1,201 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: caddy-system
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: caddy-config
+  namespace: caddy-system
+data:
+  Caddyfile: |
+    {
+      # Global options
+      admin off
+      auto_https disable_redirects
+      grace_period 10s
+      servers {
+        metrics
+      }
+    }
+
+    # Default server 
+    :80 {
+      metrics /metrics
+      
+      # Default handler for unmatched hosts
+      handle {
+        respond "Caddy Kubernetes Ingress - No matching service" 404
+      }
+    }
+
+    # This section will be dynamically managed by the CaddyFile ConfigMap updater
+    # in the caddy-ingress.sh script that runs as an init container
+    
+    # Examples:
+    # plex.example.com {
+    #   reverse_proxy plex.apps.svc.cluster.local:32400
+    # }
+    #
+    # jellyfin.example.com {
+    #   reverse_proxy jellyfin.apps.svc.cluster.local:8096
+    # }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caddy
+  namespace: caddy-system
+  labels:
+    app: caddy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: caddy
+  template:
+    metadata:
+      labels:
+        app: caddy
+    spec:
+      volumes:
+        - name: caddy-config
+          configMap:
+            name: caddy-config
+        - name: caddy-data
+          persistentVolumeClaim:
+            claimName: caddy-data
+        - name: caddy-config-json
+          emptyDir: {}
+      initContainers:
+        - name: caddy-ingress-updater
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              CADDYFILE=/config/Caddyfile
+              TEMP_FILE=/tmp/Caddyfile
+              
+              # Copy the base Caddyfile to start with
+              cp /config-volume/Caddyfile $TEMP_FILE
+              
+              # Function to add ingress config for a service
+              add_service() {
+                local SERVICE_NAME=$1
+                local SERVICE_NAMESPACE=$2
+                local SERVICE_PORT=$3
+                local HOST=$4
+                
+                echo "" >> $TEMP_FILE
+                echo "# Auto-generated for $SERVICE_NAME" >> $TEMP_FILE
+                echo "$HOST {" >> $TEMP_FILE
+                echo "  reverse_proxy $SERVICE_NAME.$SERVICE_NAMESPACE.svc.cluster.local:$SERVICE_PORT" >> $TEMP_FILE
+                echo "}" >> $TEMP_FILE
+              }
+              
+              # Get all services in the cluster
+              kubectl get services --all-namespaces -o json | jq -r '.items[] | select(.metadata.annotations."caddy.ingress/host" != null) | "\(.metadata.name) \(.metadata.namespace) \(.spec.ports[0].port) \(.metadata.annotations."caddy.ingress/host")"' | while read SERVICE_NAME SERVICE_NAMESPACE SERVICE_PORT HOST; do
+                add_service "$SERVICE_NAME" "$SERVICE_NAMESPACE" "$SERVICE_PORT" "$HOST"
+              done
+              
+              # Replace the Caddyfile
+              mv $TEMP_FILE $CADDYFILE
+              echo "Generated Caddyfile:"
+              cat $CADDYFILE
+          volumeMounts:
+            - name: caddy-config-json
+              mountPath: /config
+            - name: caddy-config
+              mountPath: /config-volume
+      containers:
+        - name: caddy
+          image: caddy:2.7.4
+          ports:
+            - containerPort: 80
+              name: http
+            - containerPort: 443
+              name: https
+            - containerPort: 2019
+              name: admin
+          volumeMounts:
+            - name: caddy-config-json
+              mountPath: /etc/caddy
+              readOnly: true
+            - name: caddy-data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: caddy
+  namespace: caddy-system
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+      name: http
+    - port: 443
+      targetPort: 443
+      name: https
+  selector:
+    app: caddy
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: caddy-data
+  namespace: caddy-system
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: caddy-ingress-role
+rules:
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: caddy-ingress-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: caddy-system
+roleRef:
+  kind: ClusterRole
+  name: caddy-ingress-role
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,184 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: media
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-transcode
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plex
+  namespace: media
+  labels:
+    app: plex
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: plex
+  template:
+    metadata:
+      labels:
+        app: plex
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: plex
+          image: plexinc/pms-docker:latest
+          ports:
+            - containerPort: 32400
+              name: plex
+            - containerPort: 1900
+              name: dlna-udp
+              protocol: UDP
+            - containerPort: 3005
+              name: gdm1
+            - containerPort: 5353
+              name: gdm2-udp
+              protocol: UDP
+            - containerPort: 8324
+              name: control
+            - containerPort: 32410
+              name: discovery1-udp
+              protocol: UDP
+            - containerPort: 32412
+              name: discovery2-udp
+              protocol: UDP
+            - containerPort: 32413
+              name: discovery3-udp
+              protocol: UDP
+            - containerPort: 32414
+              name: discovery4-udp
+              protocol: UDP
+            - containerPort: 32469
+              name: dlna-tcp
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "America/New_York"
+            - name: HOSTNAME
+              value: "plex-k8s"
+            - name: PLEX_CLAIM
+              valueFrom:
+                secretKeyRef:
+                  name: plex-claim-token
+                  key: token
+                  optional: true
+          volumeMounts:
+            - mountPath: /config
+              name: config
+            - mountPath: /transcode
+              name: transcode
+            - mountPath: /data
+              name: media
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1000m"
+            limits:
+              memory: "4Gi"
+              cpu: "3000m"
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: plex-config
+        - name: transcode
+          persistentVolumeClaim:
+            claimName: plex-transcode
+        - name: media
+          hostPath:
+            path: /tank/media
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plex
+  namespace: media
+  annotations:
+    caddy.ingress/host: "plex.example.com"  # Replace with your actual domain
+spec:
+  selector:
+    app: plex
+  ports:
+    - name: plex
+      port: 32400
+      targetPort: 32400
+      protocol: TCP
+    - name: dlna-udp
+      port: 1900
+      targetPort: 1900
+      protocol: UDP
+    - name: dlna-tcp
+      port: 32469
+      targetPort: 32469
+      protocol: TCP
+    - name: gdm1
+      port: 3005
+      targetPort: 3005
+      protocol: TCP
+    - name: gdm2-udp
+      port: 5353
+      targetPort: 5353
+      protocol: UDP
+    - name: control
+      port: 8324
+      targetPort: 8324
+      protocol: TCP
+    - name: discovery1-udp
+      port: 32410
+      targetPort: 32410
+      protocol: UDP
+    - name: discovery2-udp
+      port: 32412
+      targetPort: 32412
+      protocol: UDP
+    - name: discovery3-udp
+      port: 32413
+      targetPort: 32413
+      protocol: UDP
+    - name: discovery4-udp
+      port: 32414
+      targetPort: 32414
+      protocol: UDP
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: plex-claim-token
+  namespace: media
+type: Opaque
+stringData:
+  # Replace with your actual Plex claim token from https://www.plex.tv/claim/
+  token: "claim-yourtoken"
