@@ -2,22 +2,33 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ./htpc/htcp.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./htpc/htcp.nix
+    ./k3s-config.nix
+    inputs.sops-nix.nixosModules.sops
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.supportedFilesystems = [ "zfs" ];
-  boot.zfs.extraPools = [ "tank" "primary" ];
+  boot.zfs.extraPools = [
+    "tank"
+    "primary"
+  ];
 
-  networking.hostName = "wkg-server0"; 
+  networking.hostName = "wkg-server0";
   networking.hostId = "52ff0c0a";
 
   time.timeZone = "America/New_York";
@@ -25,11 +36,17 @@
   users.users.wkg = {
     isNormalUser = true;
     description = "William Goeller";
-    extraGroups = [ "networkmanager" "wheel" "podman" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "podman"
+    ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICXw4ngDYWRRiyF8TqrJ3yXQ7xHTRQr6QbZjY3uM1hGr william@williamgoeller.com"
     ];
   };
+
+  nix.settings.trusted-users = [ "root" "wkg" ];
 
   security.sudo.wheelNeedsPassword = false;
 
@@ -83,26 +100,37 @@ hfsprogs
 lf
 backblaze-b2
 devenv
+direnv
   ];
   services.openssh.enable = true;
   services.cachix-agent.enable = true;
 
-  services.vscode-server.enable = true; 
+  services.vscode-server.enable = true;
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 22 80 443 8123
-    6443 # k3s: required so that pods can reach the API server (running on port 6443 by default)
-    2379 # k3s, etcd clients: required if using a "High Availability Embedded etcd" configuration
-    2380 # k3s, etcd peers: required if using a "High Availability Embedded etcd" configuration
+  networking.firewall.allowedTCPPorts = [
+    22 # SSH
+    80 # HTTP
+    443 # HTTPS
+    8123 # Home Assistant
+    6443 # Kubernetes API
+    2379 # etcd client
+    2380 # etcd peer
+    10250 # Kubelet API
+    10257 # Kube Controller Manager
+    10259 # Kube Scheduler
   ];
-  networking.firewall.allowedUDPPorts = [
-    8472 # k3s, flannel: required if using multi-node for inter-node networking
-    config.services.tailscale.port
-  ];
+
   networking.firewall.enable = true;
   networking.firewall.allowPing = true;
-  networking.firewall.trustedInterfaces = [ "tailscale0" ];
 
+  # Allow tailscale and k3s UDP ports through the firewall
+  networking.firewall.allowedUDPPorts = [
+    config.services.tailscale.port
+    8472 # Flannel VXLAN
+    51820 # WireGuard for k3s
+  ];
+  networking.firewall.trustedInterfaces = [ "tailscale0" ];
 
   services.samba = {
     enable = true;
@@ -149,14 +177,14 @@ devenv
         "writeable" = "yes";
       };
       "tm_share" = {
-          "path" = "/tank/timemachine";
-          "valid users" = "wkg";
-          "public" = "no";
-          "writeable" = "yes";
-          "force user" = "wkg";
-          "fruit:aapl" = "yes";
-          "fruit:time machine" = "yes";
-          "vfs objects" = "catia fruit streams_xattr";
+        "path" = "/tank/timemachine";
+        "valid users" = "wkg";
+        "public" = "no";
+        "writeable" = "yes";
+        "force user" = "wkg";
+        "fruit:aapl" = "yes";
+        "fruit:time machine" = "yes";
+        "vfs objects" = "catia fruit streams_xattr";
       };
     };
   };
@@ -165,7 +193,6 @@ devenv
     enable = true;
     openFirewall = true;
   };
-
 
   services.tailscale.enable = true;
 
@@ -176,20 +203,18 @@ devenv
     # "--debug" # Optionally add additional args to k3s
   ];
 
- # networking.bridges.br0.interfaces = [ "eno4" ];
-
   # systemd.services.create-podman-network = with config.virtualisation.oci-containers; {
-	# serviceConfig.Type = "oneshot";
-	# wantedBy = [ "podman-homer.service" ];
-	# script = ''${pkgs.podman}/bin/podman network exists net_macvlan || \ ${pkgs.podman}/bin/podman network create --driver=macvlan --gateway=192.168.xx.1 --subnet=192.168.xx.0/24 -o parent=eno4 net_macvlan'';
+  # serviceConfig.Type = "oneshot";
+  # wantedBy = [ "podman-homer.service" ];
+  # script = ''${pkgs.podman}/bin/podman network exists net_macvlan || \ ${pkgs.podman}/bin/podman network create --driver=macvlan --gateway=192.168.xx.1 --subnet=192.168.xx.0/24 -o parent=eno4 net_macvlan'';
   # };
 
   # virtualisation.oci-containers = {
   #   backend = "podman";
   #   containers = {
-	# home-assistant = import ./containers/home-assistant.nix;
-	# homer = import ./containers/homer.nix;
-      
+  # home-assistant = import ./containers/home-assistant.nix;
+  # homer = import ./containers/homer.nix;
+
   #   };
   # };
 
@@ -222,6 +247,6 @@ devenv
   # and migrated your data accordingly.
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "25.05"; # Did you read the comment?
 
 }

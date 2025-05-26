@@ -1,0 +1,55 @@
+---
+# Example of exposing a service via Tailscale
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tailscale-proxy-example
+  namespace: tailscale
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tailscale-proxy-example
+  template:
+    metadata:
+      labels:
+        app: tailscale-proxy-example
+    spec:
+      containers:
+      - name: tailscale
+        imagePullPolicy: Always
+        image: tailscale/tailscale:latest
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        env:
+        - name: TS_KUBE_SECRET
+          value: "tailscale-state-example"
+        - name: TS_USERSPACE
+          value: "true"
+        - name: TS_AUTH_KEY
+          valueFrom:
+            secretKeyRef:
+              name: tailscale-auth
+              key: auth_key
+        - name: TS_HOSTNAME
+          value: "k8s-example-proxy"
+        # Proxy traffic to the target service
+        - name: TS_DEST
+          value: "internal-service.namespace.svc.cluster.local:8080"
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: tmp
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tailscale-state-example
+  namespace: tailscale
+stringData:
+  # Empty; will be populated by Tailscale on startup
+  tailscaled.state: ""

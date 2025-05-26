@@ -1,0 +1,112 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-data
+  namespace: ai
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: ai
+  labels:
+    app: ollama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      containers:
+        - name: ollama
+          image: ollama/ollama:latest
+          ports:
+            - containerPort: 11434
+              name: http
+          env:
+            - name: OLLAMA_HOST
+              value: "0.0.0.0"
+          volumeMounts:
+            - mountPath: /root/.ollama
+              name: ollama-data
+          resources:
+            requests:
+              memory: "4Gi"
+              cpu: "2000m"
+            limits:
+              memory: "8Gi"
+              cpu: "4000m"
+          securityContext:
+            capabilities:
+              add:
+                - SYS_ADMIN # Required for some GPU operations
+      volumes:
+        - name: ollama-data
+          persistentVolumeClaim:
+            claimName: ollama-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+  namespace: ai
+  annotations:
+    caddy.ingress/host: "ollama.example.com"  # Replace with your actual domain
+spec:
+  selector:
+    app: ollama
+  ports:
+    - port: 11434
+      targetPort: 11434
+  type: ClusterIP
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ollama-model-loader
+  namespace: ai
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: model-loader
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              # Wait for Ollama to be ready
+              until curl -f -s http://ollama:11434/api/tags > /dev/null; do
+                echo "Waiting for Ollama service..."
+                sleep 5
+              done
+              
+              # Pull models
+              curl -X POST http://ollama:11434/api/pull -d '{"name": "llama2"}'
+              curl -X POST http://ollama:11434/api/pull -d '{"name": "mistral"}'
+              
+              echo "Models loaded successfully"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
