@@ -1,0 +1,4 @@
+cdk8s==2.58.0
+constructs>=10.0.0,<11.0.0
+cdk8s-plus-25==2.2.69
+pyyaml==6.0.1
