@@ -90,14 +90,17 @@ devenv
   services.vscode-server.enable = true; 
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 22 80 443 8123 ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
+  networking.firewall.allowedTCPPorts = [ 22 80 443 8123
+    6443 # k3s: required so that pods can reach the API server (running on port 6443 by default)
+    2379 # k3s, etcd clients: required if using a "High Availability Embedded etcd" configuration
+    2380 # k3s, etcd peers: required if using a "High Availability Embedded etcd" configuration
+  ];
+  networking.firewall.allowedUDPPorts = [
+    8472 # k3s, flannel: required if using multi-node for inter-node networking
+    config.services.tailscale.port
+  ];
   networking.firewall.enable = true;
   networking.firewall.allowPing = true;
-
-  # allow tailscale through the firewall
-  networking.firewall.allowedUDPPorts = [ config.services.tailscale.port ];
   networking.firewall.trustedInterfaces = [ "tailscale0" ];
 
 
@@ -167,6 +170,11 @@ devenv
   services.tailscale.enable = true;
 
 
+  services.k3s.enable = true;
+  services.k3s.role = "server";
+  services.k3s.extraFlags = toString [
+    # "--debug" # Optionally add additional args to k3s
+  ];
 
  # networking.bridges.br0.interfaces = [ "eno4" ];
 
