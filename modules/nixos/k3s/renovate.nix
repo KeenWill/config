@@ -9,11 +9,11 @@
 with lib;
 
 let
-  cfg = config.services.renovate;
+  cfg = config.k3s.renovate;
 in
 {
-  options.services.renovate = {
-    enable = mkEnableOption "Renovate dependency update tool";
+  options.k3s.renovate = {
+    enable = mkEnableOption "Renovate dependency update tool for Kubernetes";
 
     gitRepository = mkOption {
       type = types.str;
@@ -47,12 +47,8 @@ in
       git
     ];
 
-    # Install Renovate globally with npm
-    system.activationScripts.installRenovate = ''
-      if ! command -v renovate &> /dev/null; then
-        ${pkgs.nodejs}/bin/npm install -g renovate
-      fi
-    '';
+    # We'll use renovate through npx instead of installing it globally
+    environment.variables.PATH = "${pkgs.nodejs}/bin:$PATH";
 
     # Create basic renovate config if it doesn't exist
     system.activationScripts.createRenovateConfig = ''
@@ -86,9 +82,9 @@ in
     '';
 
     # Create systemd timer for renovate
-    systemd.timers.renovate = {
+    systemd.timers.k3s-renovate = {
       wantedBy = [ "timers.target" ];
-      partOf = [ "renovate.service" ];
+      partOf = [ "k3s-renovate.service" ];
       timerConfig = {
         OnCalendar = cfg.schedule;
         Persistent = true;
@@ -96,8 +92,8 @@ in
     };
 
     # Create systemd service for renovate
-    systemd.services.renovate = {
-      description = "Renovate Dependency Update Service";
+    systemd.services.k3s-renovate = {
+      description = "Renovate Dependency Update Service for Kubernetes";
       after = [ "network.target" ];
       environment = {
         NODE_PATH = "${pkgs.nodejs}/lib/node_modules";
@@ -107,7 +103,7 @@ in
 
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${pkgs.nodejs}/bin/renovate ${cfg.gitRepository}";
+        ExecStart = "${pkgs.nodejs}/bin/npx renovate ${cfg.gitRepository}";
         User = "renovate";
         Group = "renovate";
       };

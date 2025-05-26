@@ -68,8 +68,9 @@ in
           name: apps
         EOF
 
-        # Set up Cilium CNI if required
-        if [ "${toString (elem "flannel" config.services.k3s.disableComponents)}" = "1" ]; then
+        # Check if flannel is disabled (we look for flannel-backend=none in the k3s flags)
+        K3S_FLAGS="${toString config.services.k3s.extraFlags}"
+        if [[ "$K3S_FLAGS" == *"flannel-backend=none"* ]]; then
           echo "Setting up Cilium CNI..."
           helm repo add cilium https://helm.cilium.io/
           helm install cilium cilium/cilium --namespace kube-system \
@@ -79,8 +80,8 @@ in
             --set k8sServicePort=6443
         fi
 
-        # Set up MetalLB if required
-        if [ "${toString (elem "servicelb" config.services.k3s.disableComponents)}" = "1" ]; then
+        # Check if servicelb is disabled
+        if [[ "$K3S_FLAGS" == *"disable=servicelb"* ]]; then
           echo "Setting up MetalLB load balancer..."
           helm repo add metallb https://metallb.github.io/metallb
           helm install metallb metallb/metallb --namespace metallb-system --create-namespace
@@ -107,8 +108,8 @@ in
           EOF
         fi
 
-        # Set up ingress-nginx if required
-        if [ "${toString (elem "traefik" config.services.k3s.disableComponents)}" = "1" ]; then
+        # Check if traefik is disabled
+        if [[ "$K3S_FLAGS" == *"disable=traefik"* ]]; then
           echo "Setting up ingress-nginx..."
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm install ingress-nginx ingress-nginx/ingress-nginx \

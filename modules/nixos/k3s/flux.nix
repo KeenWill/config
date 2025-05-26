@@ -9,10 +9,10 @@
 with lib;
 
 let
-  cfg = config.services.fluxcd;
+  cfg = config.k3s.fluxcd;
 in
 {
-  options.services.fluxcd = {
+  options.k3s.fluxcd = {
     enable = mkEnableOption "Flux GitOps operator for K3s";
 
     gitRepository = mkOption {
@@ -48,7 +48,7 @@ in
     };
   };
 
-  config = mkIf (config.services.k3s.enable && cfg.enable) {
+  config = mkIf cfg.enable {
     # Install flux CLI tools
     environment.systemPackages = with pkgs; [
       fluxcd
@@ -96,7 +96,7 @@ in
     };
 
     # Create a service to bootstrap Flux after k3s is running
-    systemd.services.flux-bootstrap = mkIf cfg.enable {
+    systemd.services.flux-bootstrap = {
       description = "Bootstrap Flux GitOps for k3s";
       wantedBy = [ "multi-user.target" ];
       after = [ "k3s.service" ];

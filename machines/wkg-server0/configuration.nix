@@ -6,6 +6,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -15,6 +16,7 @@
     ./hardware-configuration.nix
     ./htpc/htcp.nix
     ./k3s-config.nix
+    inputs.sops-nix.nixosModules.sops
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -241,6 +243,6 @@ direnv
   # and migrated your data accordingly.
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "25.05"; # Did you read the comment?
 
 }

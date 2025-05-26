@@ -3,6 +3,7 @@
   config,
   lib,
   pkgs,
+  inputs ? {},
   ...
 }:
 
@@ -17,58 +18,46 @@ with lib;
   services.k3s = {
     enable = true;
     role = "server";
-    clusterInit = true;
-    disableComponents = [
-      "traefik" # We'll use our own ingress controller
-      "servicelb" # We'll use metallb for load balancing
-    ];
-
     extraFlags = [
       "--tls-san=${config.networking.hostName}"
       "--cluster-cidr=10.42.0.0/16"
       "--service-cidr=10.43.0.0/16"
       "--cluster-dns=10.43.0.10"
+      "--flannel-backend=none"  # Disable flannel
+      "--disable-network-policy" # Disable network policy controller
+      "--disable=traefik"  # Disable traefik
+      "--disable=servicelb"  # Disable servicelb
     ];
   };
 
   # Enable Flux GitOps
-  services.fluxcd = {
+  k3s.fluxcd = {
     enable = true;
-    # Replace with your actual GitOps repository URL
-    gitRepository = "https://github.com/yourusername/k3s-gitops.git";
-    branch = "main";
-    path = "./kubernetes";
-    interval = "1m";
-    # deployKey = "/etc/ssh/flux-deploy-key"; # Uncomment and set if using SSH
+    # Default repository URL that can be overridden in machine-specific config
+    gitRepository = mkDefault "https://github.com/yourusername/k3s-gitops.git";
+    branch = mkDefault "main";
+    path = mkDefault "./kubernetes";
+    interval = mkDefault "1m";
+    # deployKey = mkDefault null; # Uncomment and set if using SSH
   };
 
-  # SOPS secrets management
-  sops = {
+  # SOPS secrets management - defined via sops-nix import in the main configuration
+  k3s.sops = {
     enable = true;
     age.generateKey = true;
     # If you have a sops config file, specify it here
     # defaultSopsFile = "/path/to/secrets.yaml";
-
-    # Example secret configuration
-    secrets = {
-      "k3s-token" = {
-        sopsFile = "/path/to/k3s-secrets.yaml";
-        path = "/var/lib/rancher/k3s/server/token";
-      };
-    };
   };
 
   # Ensure directories exist
   systemd.tmpfiles.rules = [
+    # Rancher/k3s directories
     "d /var/lib/rancher 0755 root root -"
     "d /var/lib/rancher/k3s 0755 root root -"
     "d /var/lib/rancher/k3s/server 0755 root root -"
     "d /etc/rancher 0755 root root -"
     "d /etc/rancher/k3s 0755 root root -"
-  ];
-
-  # Kubernetes persistent volumes directories
-  systemd.tmpfiles.rules = [
+    # Kubernetes persistent volumes directory
     "d /var/lib/k3s-pv 0755 root root -"
   ];
 

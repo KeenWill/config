@@ -3,6 +3,7 @@
   config,
   lib,
   pkgs,
+  inputs ? {},
   ...
 }:
 
@@ -13,21 +14,27 @@
 
   # Override any k3s settings as needed for this specific server
   services.k3s = {
+    enable = true;
+    role = "server";
     extraFlags = [
       "--tls-san=${config.networking.hostName}"
       "--tls-san=${config.networking.hostName}.local"
       "--tls-san=10.0.1.100" # Replace with your server's IP address
+      "--flannel-backend=none"  # Disable flannel
+      "--disable-network-policy" # Disable network policy controller
+      "--disable=traefik"  # Disable traefik
+      "--disable=servicelb"  # Disable servicelb
     ];
   };
 
   # Configure Flux GitOps
-  services.fluxcd = {
+  k3s.fluxcd = {
     # Update this to point to your actual Git repository
     gitRepository = "https://github.com/williamgoeller/k3s-gitops.git";
   };
 
   # Configure SOPS for Kubernetes secrets
-  sops = {
+  k3s.sops = {
     # Set a specific SOPS configuration if needed
     # defaultSopsFile = "/etc/k3s/secrets.yaml";
   };
@@ -70,7 +77,7 @@
   };
 
   # Enable renovate for automated dependency updates
-  services.renovate = {
+  k3s.renovate = {
     enable = true;
     gitRepository = "https://github.com/williamgoeller/k3s-gitops.git";
     # Configure GitHub token securely

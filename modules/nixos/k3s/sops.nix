@@ -4,11 +4,11 @@
 with lib;
 
 let
-  cfg = config.sops;
+  cfg = config.k3s.sops;
 in
 {
-  options.sops = {
-    enable = mkEnableOption "SOPS secret management";
+  options.k3s.sops = {
+    enable = mkEnableOption "SOPS secret management for k3s";
     
     age = {
       keyFile = mkOption {
@@ -24,49 +24,6 @@ in
       };
     };
 
-    secrets = mkOption {
-      type = types.attrsOf (types.submodule {
-        options = {
-          sopsFile = mkOption {
-            type = types.str;
-            description = "Path to the SOPS encrypted file";
-          };
-
-          format = mkOption {
-            type = types.enum [ "yaml" "json" "binary" "dotenv" "ini" ];
-            default = "yaml";
-            description = "Format of the SOPS encrypted file";
-          };
-
-          owner = mkOption {
-            type = types.str;
-            default = "root";
-            description = "Owner of the decrypted secret";
-          };
-
-          group = mkOption {
-            type = types.str;
-            default = "root";
-            description = "Group of the decrypted secret";
-          };
-
-          mode = mkOption {
-            type = types.str;
-            default = "0400";
-            description = "Permissions of the decrypted secret";
-          };
-
-          path = mkOption {
-            type = types.str;
-            default = "";
-            description = "Path where the decrypted secret should be stored";
-          };
-        };
-      });
-      default = {};
-      description = "Set of secrets to manage with SOPS";
-    };
-
     defaultSopsFile = mkOption {
       type = types.str;
       default = "";
@@ -79,17 +36,6 @@ in
       sops
       age
     ];
-
-    # Import sops-nix
-    imports = [
-      (mkIf pkgs ? sops-nix (pkgs.sops-nix.nixosModules.sops))
-    ];
-
-    # Configure sops-nix
-    sops = {
-      age.keyFile = cfg.age.keyFile;
-      defaultSopsFile = cfg.defaultSopsFile;
-    };
 
     # Create a service to generate age key if requested
     systemd.services.sops-generate-age-key = mkIf cfg.age.generateKey {
